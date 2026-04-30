@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prompt Library</title>
+    <link rel="stylesheet" href="./sidepanel.css" />
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <h1>Prompt Library</h1>
+      </header>
+
+      <section class="search">
+        <input id="searchInput" type="search" placeholder="Search title, body, tags..." />
+      </section>
+
+      <section class="list">
+        <div id="templateList" class="template-list"></div>
+      </section>
+
+      <section class="editor">
+        <input id="titleInput" type="text" maxlength="120" placeholder="Template title" />
+        <textarea
+          id="bodyInput"
+          maxlength="10000"
+          placeholder="Template body. Use variables like {{company}}"
+        ></textarea>
+        <input id="tagsInput" type="text" placeholder="Tags (comma separated)" />
+        <label class="favorite-toggle">
+          <input id="favoriteInput" type="checkbox" />
+          Favorite
+        </label>
+      </section>
+
+      <section class="actions">
+        <button id="insertButton">Insert</button>
+        <button id="newButton">New</button>
+        <button id="saveButton">Save</button>
+        <button id="deleteButton">Delete</button>
+        <button id="importButton">Import</button>
+        <button id="exportButton">Export</button>
+        <button id="copyFallbackButton" class="hidden">Copy rendered prompt</button>
+        <input id="importFileInput" type="file" accept="application/json" class="hidden" />
+      </section>
+    </main>
+
+    <div id="variableModal" class="modal hidden" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <h2>Fill Variables</h2>
+        <form id="variableForm" class="variable-form"></form>
+        <div class="modal-actions">
+          <button id="variableCancelButton" type="button">Cancel</button>
+          <button id="variableApplyButton" type="button">Insert</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script type="module" src="./sidepanel.js"></script>
+  </body>
+</html>
