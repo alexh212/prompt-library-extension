@@ -4,55 +4,96 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Prompt Library</title>
+    <link rel="preconnect" href="https://rsms.me/" />
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link rel="stylesheet" href="./sidepanel.css" />
   </head>
   <body>
     <main class="app">
       <header class="header">
         <h1>Prompt Library</h1>
+        <span id="headerMeta" class="header-meta"></span>
       </header>
 
-      <section class="search">
-        <input id="searchInput" type="search" placeholder="Search title, body, tags..." />
-      </section>
+      <nav class="folder-tabs" id="folderTabs" aria-label="Folders"></nav>
 
-      <section class="list">
-        <div id="templateList" class="template-list"></div>
-      </section>
-
-      <section class="editor">
-        <input id="titleInput" type="text" maxlength="120" placeholder="Template title" />
-        <textarea
-          id="bodyInput"
-          maxlength="10000"
-          placeholder="Template body. Use variables like {{company}}"
-        ></textarea>
-        <input id="tagsInput" type="text" placeholder="Tags (comma separated)" />
-        <label class="favorite-toggle">
-          <input id="favoriteInput" type="checkbox" />
-          Favorite
-        </label>
-      </section>
-
-      <section class="actions">
-        <button id="insertButton">Insert</button>
-        <button id="newButton">New</button>
-        <button id="saveButton">Save</button>
-        <button id="deleteButton">Delete</button>
-        <button id="importButton">Import</button>
-        <button id="exportButton">Export</button>
-        <button id="copyFallbackButton" class="hidden">Copy rendered prompt</button>
+      <section class="toolbar">
+        <div class="search">
+          <input id="searchInput" type="search" placeholder="Search title, body, tags" />
+        </div>
+        <button id="newButton" class="toolbar-button primary" type="button">New Prompt</button>
+        <button id="importButton" class="toolbar-button" type="button">Import</button>
+        <button id="exportButton" class="toolbar-button" type="button">Export</button>
         <input id="importFileInput" type="file" accept="application/json" class="hidden" />
       </section>
+
+      <section class="list" id="templateList"></section>
     </main>
+
+    <aside class="sheet hidden" id="editorSheet" role="dialog" aria-modal="true">
+      <div class="sheet-card">
+        <header class="sheet-header">
+          <h2 id="sheetTitle" class="sheet-title">New Prompt</h2>
+          <button id="sheetCloseButton" class="toolbar-button" type="button">Close</button>
+        </header>
+
+        <div class="sheet-body">
+          <div class="field">
+            <span class="field-label">Title</span>
+            <input id="titleInput" type="text" maxlength="120" placeholder="Untitled prompt" />
+          </div>
+
+          <div class="field">
+            <span class="field-label">Folder</span>
+            <select id="folderSelect"></select>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Body</span>
+            <textarea
+              id="bodyInput"
+              maxlength="10000"
+              placeholder="Write your prompt. Use variables like {{company}}"
+            ></textarea>
+          </div>
+
+          <div class="field">
+            <span class="field-label">Tags</span>
+            <input id="tagsInput" type="text" placeholder="comma, separated, tags" />
+          </div>
+
+          <label class="checkbox-row">
+            <input id="favoriteInput" type="checkbox" />
+            Mark as favorite
+          </label>
+        </div>
+
+        <footer class="sheet-actions">
+          <div class="group">
+            <button id="deleteButton" class="toolbar-button danger" type="button">Delete</button>
+          </div>
+          <div class="group">
+            <button id="copyFallbackButton" class="toolbar-button hidden" type="button">
+              Copy rendered prompt
+            </button>
+            <button id="saveButton" class="toolbar-button" type="button">Save</button>
+            <button id="saveInsertButton" class="toolbar-button primary" type="button">
+              Save &amp; Insert
+            </button>
+          </div>
+        </footer>
+      </div>
+    </aside>
 
     <div id="variableModal" class="modal hidden" role="dialog" aria-modal="true">
       <div class="modal-card">
         <h2>Fill Variables</h2>
         <form id="variableForm" class="variable-form"></form>
         <div class="modal-actions">
-          <button id="variableCancelButton" type="button">Cancel</button>
-          <button id="variableApplyButton" type="button">Insert</button>
+          <button id="variableCancelButton" class="toolbar-button" type="button">Cancel</button>
+          <button id="variableApplyButton" class="toolbar-button primary" type="button">
+            Insert
+          </button>
         </div>
       </div>
     </div>

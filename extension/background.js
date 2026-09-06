@@ -1,5 +1,17 @@
 import { getSiteAdapterForUrl } from "./core/siteAdapters.js";
 
+function enableActionPanelBehavior() {
+  chrome.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+}
+
+chrome.runtime.onInstalled.addListener(() => {
+  enableActionPanelBehavior();
+});
+
+chrome.runtime.onStartup.addListener(() => {
+  enableActionPanelBehavior();
+});
+
 function getActiveTab() {
   return chrome.tabs.query({ active: true, currentWindow: true }).then((tabs) => tabs[0] ?? null);
 }
@@ -52,12 +64,18 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
   getActiveTab()
     .then((tab) => {
-      if (!tab?.id || !tab.url) {
+      if (!tab?.id) {
         sendResponse({ ok: false, error: "No active tab available." });
         return;
       }
 
-      const adapter = getSiteAdapterForUrl(tab.url);
+      const tabUrl = tab.url ?? tab.pendingUrl;
+      if (!tabUrl) {
+        sendResponse({ ok: false, error: "Unable to read active tab URL." });
+        return;
+      }
+
+      const adapter = getSiteAdapterForUrl(tabUrl);
       if (!adapter) {
         sendResponse({ ok: false, error: "This site is not supported for insertion." });
         return;

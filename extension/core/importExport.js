@@ -1,9 +1,10 @@
 import { validateTemplate } from "./validation.js";
 
-export function serializeTemplates(templates) {
+export function serializeTemplates(templates, folders) {
   return {
     version: 1,
     exportedAt: new Date().toISOString(),
+    folders: Array.isArray(folders) ? folders : [],
     templates: Array.isArray(templates) ? templates : []
   };
 }
@@ -26,6 +27,10 @@ export function validateImportPayload(payload) {
     errors.push("Import payload templates must be an array.");
   }
 
+  if (payload.folders !== undefined && !Array.isArray(payload.folders)) {
+    errors.push("Import payload folders must be an array when present.");
+  }
+
   const normalizedTemplates = [];
   if (Array.isArray(payload.templates)) {
     payload.templates.forEach((template, index) => {
@@ -33,14 +38,43 @@ export function validateImportPayload(payload) {
       if (!result.ok) {
         errors.push(`Template ${index + 1} is invalid: ${result.errors.join(" ")}`);
       } else {
-        normalizedTemplates.push(result.normalized);
+        normalizedTemplates.push({
+          ...result.normalized,
+          folderId: template?.folderId ?? null
+        });
       }
+    });
+  }
+
+  const normalizedFolders = [];
+  if (Array.isArray(payload.folders)) {
+    payload.folders.forEach((folder, index) => {
+      if (!folder || typeof folder !== "object") {
+        errors.push(`Folder ${index + 1} is invalid: must be an object.`);
+        return;
+      }
+      const name = String(folder.name ?? "").trim();
+      const id = folder.id ? String(folder.id) : "";
+      if (!name) {
+        errors.push(`Folder ${index + 1} is invalid: name is required.`);
+        return;
+      }
+      if (!id) {
+        errors.push(`Folder ${index + 1} is invalid: id is required.`);
+        return;
+      }
+      normalizedFolders.push({
+        id,
+        name,
+        createdAt: folder.createdAt ? String(folder.createdAt) : new Date().toISOString()
+      });
     });
   }
 
   return {
     ok: errors.length === 0,
     errors,
-    templates: normalizedTemplates
+    templates: normalizedTemplates,
+    folders: normalizedFolders
   };
 }
